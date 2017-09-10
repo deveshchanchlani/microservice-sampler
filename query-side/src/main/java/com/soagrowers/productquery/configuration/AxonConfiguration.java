@@ -18,7 +18,7 @@ import org.springframework.transaction.PlatformTransactionManager;
  */
 @Configuration
 @AnnotationDriven
-class AxonConfiguration {
+public class AxonConfiguration {
 
     private static final String AMQP_CONFIG_KEY = "AMQP.Config";
 
@@ -44,7 +44,6 @@ class AxonConfiguration {
         return new XStreamSerializer();
     }*/
 
-
     @Bean
     JacksonSerializer axonJsonSerializer() {
         return new JacksonSerializer();
@@ -68,9 +67,9 @@ class AxonConfiguration {
 
 
     @Bean
-    SimpleCluster simpleCluster(SpringAMQPConsumerConfiguration springAMQPConsumerConfiguration) {
+    SimpleCluster simpleCluster() {
         SimpleCluster simpleCluster = new SimpleCluster(uniqueQueueName);
-        simpleCluster.getMetaData().setProperty(AMQP_CONFIG_KEY, springAMQPConsumerConfiguration);
+        simpleCluster.getMetaData().setProperty(AMQP_CONFIG_KEY, springAMQPConsumerConfiguration());
         return simpleCluster;
     }
 
@@ -78,18 +77,18 @@ class AxonConfiguration {
     EventBusTerminal terminal() {
         SpringAMQPTerminal terminal = new SpringAMQPTerminal();
         terminal.setConnectionFactory(connectionFactory);
-        //terminal.setSerializer(xmlSerializer());
-        terminal.setSerializer(axonJsonSerializer());
         terminal.setExchangeName(terminalName);
-        terminal.setListenerContainerLifecycleManager(listenerContainerLifecycleManager());
         terminal.setDurable(true);
         terminal.setTransactional(true);
+        terminal.setSerializer(axonJsonSerializer());
+        //terminal.setSerializer(xmlSerializer());
+        terminal.setListenerContainerLifecycleManager(listenerContainerLifecycleManager());
         return terminal;
     }
 
     @Bean
-    EventBus eventBus(SimpleCluster simpleCluster) {
-        return new ClusteringEventBus(new DefaultClusterSelector(simpleCluster), terminal());
+    EventBus eventBus() {
+        return new ClusteringEventBus(new DefaultClusterSelector(simpleCluster()), terminal());
     }
 
 }

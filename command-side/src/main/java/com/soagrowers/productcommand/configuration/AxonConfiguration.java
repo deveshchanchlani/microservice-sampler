@@ -72,26 +72,26 @@ public class AxonConfiguration {
 
     @Bean
     ListenerContainerLifecycleManager listenerContainerLifecycleManager() {
-        ListenerContainerLifecycleManager mgr = new ListenerContainerLifecycleManager();
-        mgr.setConnectionFactory(connectionFactory);
-        return mgr;
+        ListenerContainerLifecycleManager listenerContainerLifecycleManager = new ListenerContainerLifecycleManager();
+        listenerContainerLifecycleManager.setConnectionFactory(connectionFactory);
+        return listenerContainerLifecycleManager;
     }
 
     @Bean
     SpringAMQPConsumerConfiguration springAMQPConsumerConfiguration() {
-        SpringAMQPConsumerConfiguration cfg = new SpringAMQPConsumerConfiguration();
-        cfg.setTransactionManager(transactionManager);
-        cfg.setQueueName(queueName);
-        cfg.setTxSize(10);
-        return cfg;
+        SpringAMQPConsumerConfiguration amqpConsumerConfiguration = new SpringAMQPConsumerConfiguration();
+        amqpConsumerConfiguration.setTxSize(10);
+        amqpConsumerConfiguration.setTransactionManager(transactionManager);
+        amqpConsumerConfiguration.setQueueName(queueName);
+        return amqpConsumerConfiguration;
     }
 
 
     @Bean
     SimpleCluster simpleCluster() {
-        SimpleCluster cluster = new SimpleCluster(queueName);
-        cluster.getMetaData().setProperty(AMQP_CONFIG_KEY, springAMQPConsumerConfiguration());
-        return cluster;
+        SimpleCluster simpleCluster = new SimpleCluster(queueName);
+        simpleCluster.getMetaData().setProperty(AMQP_CONFIG_KEY, springAMQPConsumerConfiguration());
+        return simpleCluster;
     }
 
     @Bean

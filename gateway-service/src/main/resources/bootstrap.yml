@@ -5,7 +5,8 @@ spring:
     name: gateway-service
   cloud:
     config:
-      uri: http://config:8888
+#      uri: http://config:8888
+      uri: http://192.168.2.7:8888
       failFast: true
       retry:
         initialInterval: 2000

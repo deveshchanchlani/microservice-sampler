@@ -37,7 +37,8 @@ services:
      - discovery
      - config
   product-command-side:
-    image: benwilcock/product-command-side:latest
+#    image: benwilcock/product-command-side:latest
+    image: benwilcock/command-side:latest
     container_name: product-cmd-side
     depends_on:
      - mongodb
@@ -49,7 +50,8 @@ services:
     environment:
      - SPRING_PROFILES_ACTIVE=production
   product-query-side:
-    image: benwilcock/product-query-side:latest
+#    image: benwilcock/product-query-side:latest
+    image: benwilcock/query-side:latest
     container_name: product-qry-side
     depends_on:
      - rabbitmq
