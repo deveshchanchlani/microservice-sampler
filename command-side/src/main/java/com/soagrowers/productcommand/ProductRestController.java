@@ -1,6 +1,7 @@
 package com.soagrowers.productcommand;
 
 import com.soagrowers.productcommand.commands.AddProductCommand;
+import com.soagrowers.productcommand.commands.MarkProductAsSaleableCommand;
 import com.soagrowers.utils.Asserts;
 import org.axonframework.commandhandling.CommandExecutionException;
 import org.axonframework.commandhandling.gateway.CommandGateway;
@@ -52,6 +53,32 @@ public class ProductRestController {
                     LOG.warn("A duplicate product with the same ID [{}] already exists.", id);
                     response.setStatus(HttpServletResponse.SC_CONFLICT);
                 }
+            }
+        }
+    }
+
+    @RequestMapping(value = "/markSellable/{id}", method = RequestMethod.POST)
+    public void markSellable(@PathVariable(value = "id") String id,
+                             HttpServletResponse response) {
+
+        LOG.debug("Making Product Sellable [{}]", id);
+
+        try {
+            Asserts.INSTANCE.isNotEmpty(Arrays.asList(id));
+            MarkProductAsSaleableCommand command = new MarkProductAsSaleableCommand(id);
+            commandGateway.sendAndWait(command);
+            LOG.info("Making Product Sellable [{}]", id);
+            response.setStatus(HttpServletResponse.SC_ACCEPTED);
+            return;
+        } catch (AssertionError ae) {
+            LOG.warn("Mark Sellable Request failed - empty params?. [{}]", id);
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        } catch (CommandExecutionException cex) {
+            LOG.warn("Mark Sellable Command FAILED with Message: {}", cex.getMessage());
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+
+            if (null != cex.getCause()) {
+                LOG.warn("Caused by: {} {}", cex.getCause().getClass().getName(), cex.getCause().getMessage());
             }
         }
     }
