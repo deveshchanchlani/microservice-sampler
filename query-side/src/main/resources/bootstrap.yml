@@ -6,8 +6,7 @@ spring:
     index: ${random.int[1024,4096]}
   cloud:
     config:
-      uri: http://192.168.2.7:8888
-#      uri: http://localhost:8888
+      uri: http://config:8888
       failFast: true
       retry:
         initialInterval: 2000
